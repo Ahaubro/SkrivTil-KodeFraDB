@@ -1,0 +1,130 @@
+package com.company;
+
+import java.io.IOException;
+import java.sql.*;
+import java.util.Calendar;
+
+public class Main {
+
+    public static void main(String[] args) throws SQLException {
+
+        Person a = new Person("Emil", "Agri Larsen", 22, "Nordhavns finekvarter", "200, 3F");
+        Person b = new Person("Malou", "Lerhøj Eskildsen", 23, "Lundebjerggårdsvej", "254, 2a");
+
+        String f = b.getFirstname();
+        String l = b.getLastname();
+        int age = b.getAge();
+        String ad = b.getAddress();
+        String an = b.getaNumber();
+
+
+        //personTilDatabaseManu();
+        //personTilDB(f, l, age, ad, an);
+        læsFraDB();
+
+    }
+
+    // Metode hvor man "manuelt" kan skrive en Person til databasen Leg, til tabellen Person.
+    public static void personTilDatabaseManu() throws SQLException {
+        try {
+            // For at dette program virker, har jeg været nødt til at specificere database navnet i min url, altså "this"
+            //Men dette program kan skrive ud til en database.
+            String myDriver = "com.mysql.cj.jdbc.Driver";
+            String myUrl = "jdbc:mysql://127.0.0.1:3306/leg?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+            Class.forName(myDriver);
+            Connection conn = DriverManager.getConnection(myUrl, "Her", "0");
+
+
+            // Mysql indsæt string
+            String ind = "INSERT INTO Person (firstname, lastname, age, address, aNumber)"
+                    + " values (?, ?, ?, ?, ?)";
+
+            // create the mysql insert preparedstatement
+            PreparedStatement preparedStmt = conn.prepareStatement(ind);
+
+            preparedStmt.setString (1, "Alexander");
+            preparedStmt.setString (2, "Jacobsen");
+            preparedStmt.setInt   (3, 25);
+            preparedStmt.setString(4, "Lundebjerggårdsvej");
+            preparedStmt.setString   (5, "254, 2a");
+
+            // execute the preparedstatement
+            preparedStmt.executeUpdate();
+
+            conn.close();
+        } catch (Exception e) {
+            System.err.println("Got an exception!");
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public static void personTilDB(String f, String l, int age, String ad, String an) throws SQLException {
+        try {
+            // For at dette program virker, har jeg været nødt til at specificere database navnet i min url, altså "leg"
+            //Men dette program kan skrive ud til en database.
+            String myDriver = "com.mysql.cj.jdbc.Driver";
+            String myUrl = "jdbc:mysql://127.0.0.1:3306/leg?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+            Class.forName(myDriver);
+            Connection conn = DriverManager.getConnection(myUrl, "Her", "0");
+
+            // Mysql indsæt string
+            String ind = "INSERT INTO Person (firstname, lastname, age, address, aNumber)"
+                    + " values (?, ?, ?, ?, ?)";
+
+            // create the mysql insert preparedstatement
+            PreparedStatement preparedStmt = conn.prepareStatement(ind);
+
+            preparedStmt.setString (1, f);
+            preparedStmt.setString (2, l);
+            preparedStmt.setInt   (3, age);
+            preparedStmt.setString(4, ad);
+            preparedStmt.setString   (5, an);
+
+            // execute the preparedstatement
+            preparedStmt.executeUpdate();
+
+            conn.close();
+
+            }catch (Exception e) {
+            System.err.println("Got an exception!");
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public static void læsFraDB() {
+        final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+        final String DATABASE_URL = "jdbc:mysql://127.0.0.1:3306/?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+
+        try {
+            Connection con;
+            Statement s = null;
+            Class.forName (JDBC_DRIVER);
+            con = DriverManager.getConnection(DATABASE_URL,"Her","0");
+            s = con.createStatement();
+            ResultSet rs = s.executeQuery("SELECT * FROM leg.Person;");
+
+            if (rs != null)
+                while (rs.next()) {
+                    System.out.println("Databasens indhold: " + rs.getString("firstname") +
+                            " " + rs.getString("lastname") + " " + rs.getInt("age") +
+                            " " + rs.getString("address") + " " + rs.getString("aNumber"));
+                }
+            s.close();
+            con.close();
+        } catch (SQLException sqlex) {
+            try{
+                Connection con = null;
+                System.out.println(sqlex.getMessage());
+                con.close();
+                System.exit(1);  // terminate program
+            }
+            catch(SQLException sql){}
+        }
+        catch (ClassNotFoundException noClass) {
+            System.err.println("Driver Class not found");
+            System.out.println(noClass.getMessage());
+            System.exit(1);  // terminate program
+        }
+    }
+
+}
