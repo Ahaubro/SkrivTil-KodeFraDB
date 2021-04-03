@@ -20,7 +20,7 @@ public class Main {
         System.out.println("Heeelllo friend! There is " + list.size() + " Costumer and " + car.size() + " Cars in our data-sheet.. ");
         while(stop){
             boolean stopcase = true;
-            System.out.println("The Menu:\n1. Create private or company rental \n2. Create fam, sport or luxury car  \n3. Print car or person \n4. Make Contract \n5. Quit...");
+            System.out.println("\n ****** The Menu ******:\n1. Create private or company rental \n2. Create fam, sport or luxury car  \n3. Print car or person \n4. Make Contract \n5. Quit...");
 
             switch(scan.next()){
                 case "1":
@@ -737,7 +737,7 @@ public class Main {
                 preparedStmt.setString(6,familyCars.get(i).regYearAndMonth);
                 preparedStmt.setInt   (7,familyCars.get(i).drivenKM);
                 preparedStmt.setString(8,familyCars.get(i).gearType);
-                preparedStmt.setString(9,familyCars.get(i).hasaircon);
+                preparedStmt.setString(9,familyCars.get(i).hasAirCon);
                 preparedStmt.setString(10,familyCars.get(i).hasCC);
                 preparedStmt.setString(11,familyCars.get(i).seatNumber);
 
@@ -768,7 +768,7 @@ public class Main {
 
             if (rs != null)
                 while (rs.next()) {
-                    System.out.println("Persons in the database: " + "\nID: " + rs.getString("PersonID") +
+                    System.out.println("\nPersons in the database: " + "\nID: " + rs.getString("PersonID") +
                             "\nName of driver: " + rs.getString("nameOfDriver") + "\nAddress: " + rs.getString("Address") +
                             "\nZip code: " + rs.getInt("PostNumber") + "\nCity: " + rs.getString("City") +
                             "\nMobile phonenumber: " + rs.getInt("mobilePhone") + "\nPhonenumber: " + rs.getInt("phone") +
@@ -808,7 +808,7 @@ public class Main {
 
             if (rs != null)
                 while (rs.next()) {
-                    System.out.println("Luksus biler i databasen: " + "\nID: " + rs.getInt("LuxurycarID") +
+                    System.out.println("\nLuksus biler i databasen: " + "\nID: " + rs.getInt("LuxurycarID") +
                             "\nType: " + rs.getString("Type") + "\nBrand: " + rs.getString("Brand") +
                             "\nModel: " + rs.getString("Model") + "\nFuel type: " + rs.getString("FuelType") +
                             "\nPlate: " + rs.getString("plate") + "\nRegistration year/month: " + rs.getString("regYearAndMonth") +
@@ -850,7 +850,7 @@ public class Main {
 
             if (rs != null)
                 while (rs.next()) {
-                    System.out.println("Sports biler i databasen: " + "\nID: " + rs.getInt("SportCarID") +
+                    System.out.println("\nSports biler i databasen: " + "\nID: " + rs.getInt("SportCarID") +
                             "\nType: " + rs.getString("Type") + "\nBrand: " + rs.getString("Brand") +
                             "\nModel " + rs.getString("Model") + "\nFuel type: " + rs.getString("FuelType") +
                             "\nPlate: " + rs.getString("plate") + "\nRegistration year/month: " + rs.getString("regYearAndMonth") +
