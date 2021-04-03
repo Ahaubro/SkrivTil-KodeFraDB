@@ -8,43 +8,11 @@ public class Main {
     public static void main (String [] args) throws FileNotFoundException, SQLException {
 
         ArrayList<Person> list = new ArrayList<>();
-        Person p1 = new Person("Symbol?", 0, "Alexander Jacobsen", "Lundebjerg 22", 2740, "Skovlunde", 20355729, 20355729, "alex_haubro@hotmail.com");
-        list.add(p1);
-        //objectTilDBPerson(list);
-
-
         ArrayList<Contract> contracts = new ArrayList<>();
-        Contract c1 = new Contract(1, "Audi A6", "5/4-2021", "12/4-2021", 650, 300, "AZ09561");
-        contracts.add(c1);
-        //objectTilDBContract(contracts);
-
-
         ArrayList<LuxuryCar> luksusListen = new ArrayList<>();
-        LuxuryCar l1 = new LuxuryCar("Stationcar", "Ford", "Mondeo", "Benzin 95", "KX670098", "04-2012",
-                250000, "Automatic", "Yes", "Yes", "Leatherseats", "3500");
-        luksusListen.add(l1);
-        //objectTilDBLuxCar(luksusListen);
-
-
         ArrayList<SportCar> sportList = new ArrayList<>();
-        SportCar s1 = new SportCar("Audi", "S8", "TURBO", "Benzin 95", "KL01026", "08-2018", 180000, "Manuel",
-                "750");
-        sportList.add(s1);
-        //objectTilDBSportCar(sportList);
-
-
         ArrayList<FamilyCar> familyCars = new ArrayList<>();
-        FamilyCar f1 = new FamilyCar("VW", "Touran", "t1", "Diesel", "TP809338", "07-2014", 350000, "Manuel",
-                "Yes", "Yes", "8");
-        familyCars.add(f1);
-        //objectTilDBFamilyCar(familyCars);
-
-
         ArrayList<Car> car = new ArrayList<>();
-
-
-
-
 
         boolean stop = true;
         Scanner scan = new Scanner(System.in);
@@ -213,10 +181,12 @@ public class Main {
         System.out.println("Remember to exchange space with \"-\" ");
 
         System.out.println("Enter name of driver: ");
-        String nameOfDriver = scan.next();
+        String temp = scan.nextLine();
+        String nameOfDriver = scan.nextLine();
 
         System.out.println("Enter address: ");
-        String adress = scan.next();
+        String temp1 = scan.nextLine();
+        String adress = scan.nextLine();
 
         System.out.println("Enter postnumber: ");
         int postNumber = scan.nextInt();
@@ -659,8 +629,6 @@ public class Main {
     // Metode der tager en parameter overført ArrayList, og skriver indholdet ind i en database. (luxuryCar list)
     public static void objectTilDBLuxCar(ArrayList<LuxuryCar> luksusListen) throws SQLException {
         try {
-            // For at dette program virker, har jeg været nødt til at specificere database navnet i min url, altså "leg"
-            //Men dette program kan skrive ud til en database.
             String myDriver = "com.mysql.cj.jdbc.Driver";
             String myUrl = "jdbc:mysql://127.0.0.1:3306/kailua?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
             Class.forName(myDriver);
@@ -705,8 +673,6 @@ public class Main {
     // Metode der tager en parameter overført ArrayList, og skriver indholdet ind i en database. (sportsCar list)
     public static void objectTilDBSportCar(ArrayList<SportCar> sportList) throws SQLException {
         try {
-            // For at dette program virker, har jeg været nødt til at specificere database navnet i min url, altså "leg"
-            //Men dette program kan skrive ud til en database.
             String myDriver = "com.mysql.cj.jdbc.Driver";
             String myUrl = "jdbc:mysql://127.0.0.1:3306/kailua?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
             Class.forName(myDriver);
@@ -802,11 +768,11 @@ public class Main {
 
             if (rs != null)
                 while (rs.next()) {
-                    System.out.println("Personer i databasen: " + rs.getString("PersonID") +
-                            " " + rs.getString("nameOfDriver") + " " + rs.getString("Address") +
-                            " " + rs.getInt("PostNumber") + " " + rs.getString("City") +
-                            " " + rs.getInt("mobilePhone") + " " + rs.getInt("phone") +
-                             " " + rs.getString("email"));
+                    System.out.println("Persons in the database: " + "\nID: " + rs.getString("PersonID") +
+                            "\nName of driver: " + rs.getString("nameOfDriver") + "\nAddress: " + rs.getString("Address") +
+                            "\nZip code: " + rs.getInt("PostNumber") + "\nCity: " + rs.getString("City") +
+                            "\nMobile phonenumber: " + rs.getInt("mobilePhone") + "\nPhonenumber: " + rs.getInt("phone") +
+                            "\nEmail: " + rs.getString("email"));
                 }
             s.close();
             con.close();
@@ -842,13 +808,13 @@ public class Main {
 
             if (rs != null)
                 while (rs.next()) {
-                    System.out.println("Luksus biler i databasen: " + rs.getInt("LuxurycarID") +
-                            " " + rs.getString("Type") + " " + rs.getString("Brand") +
-                            " " + rs.getString("Model") + " " + rs.getString("FuelType") +
-                            " " + rs.getString("plate") + " " + rs.getString("regYearAndMonth") +
-                            " " + rs.getInt("drivenKM") + " " + rs.getString("GearType") +
-                            " " + rs.getString("hasAircon") + " " + rs.getString("hasCC") +
-                            " " + rs.getString("interior"));
+                    System.out.println("Luksus biler i databasen: " + "\nID: " + rs.getInt("LuxurycarID") +
+                            "\nType: " + rs.getString("Type") + "\nBrand: " + rs.getString("Brand") +
+                            "\nModel: " + rs.getString("Model") + "\nFuel type: " + rs.getString("FuelType") +
+                            "\nPlate: " + rs.getString("plate") + "\nRegistration year/month: " + rs.getString("regYearAndMonth") +
+                            "\nKM Driven: " + rs.getInt("drivenKM") + "\nGear type: " + rs.getString("GearType") +
+                            "\nAircondition: " + rs.getString("hasAircon") + "\nCruise controle: " + rs.getString("hasCC") +
+                            "\nInterior: " + rs.getString("interior"));
                 }
             s.close();
             con.close();
@@ -884,12 +850,12 @@ public class Main {
 
             if (rs != null)
                 while (rs.next()) {
-                    System.out.println("Sports biler i databasen: " + rs.getInt("SportCarID") +
-                            " " + rs.getString("Type") + " " + rs.getString("Brand") +
-                            " " + rs.getString("Model") + " " + rs.getString("FuelType") +
-                            " " + rs.getString("plate") + " " + rs.getString("regYearAndMonth") +
-                            " " + rs.getInt("drivenKM") + " " + rs.getString("GearType") +
-                            " " + rs.getString("horsePower"));
+                    System.out.println("Sports biler i databasen: " + "\nID: " + rs.getInt("SportCarID") +
+                            "\nType: " + rs.getString("Type") + "\nBrand: " + rs.getString("Brand") +
+                            "\nModel " + rs.getString("Model") + "\nFuel type: " + rs.getString("FuelType") +
+                            "\nPlate: " + rs.getString("plate") + "\nRegistration year/month: " + rs.getString("regYearAndMonth") +
+                            "\nKM driven: " + rs.getInt("drivenKM") + "\nGear type: " + rs.getString("GearType") +
+                            "\nHorsepower: " + rs.getString("horsePower"));
                 }
             s.close();
             con.close();
@@ -925,13 +891,13 @@ public class Main {
 
             if (rs != null)
                 while (rs.next()) {
-                    System.out.println("Familie biler i databasen: " + rs.getInt("FamilyCarID") +
-                            " " + rs.getString("Type") + " " + rs.getString("Brand") +
-                            " " + rs.getString("Model") + " " + rs.getString("FuelType") +
-                            " " + rs.getString("plate") + " " + rs.getString("regYearAndMonth") +
-                            " " + rs.getInt("drivenKM") + " " + rs.getString("GearType") +
-                            " " + rs.getString("hasAircon") + " " + rs.getString("hasCC") +
-                            " " + rs.getString("seatNumber"));
+                    System.out.println("\nFamilie biler i databasen: " + "\nID: " + rs.getInt("FamilyCarID") +
+                            "\nType: " + rs.getString("Type") + "\nBrand: " + rs.getString("Brand") +
+                            "\nModel: " + rs.getString("Model") + "\nFuel type: " + rs.getString("FuelType") +
+                            "\nPlate: " + rs.getString("plate") + "\nRegistration y/m: " + rs.getString("regYearAndMonth") +
+                            "\nKM driven: " + rs.getInt("drivenKM") + "\nGear type: " + rs.getString("GearType") +
+                            "\nAircondition: " + rs.getString("hasAircon") + "\nCruise controle: " + rs.getString("hasCC") +
+                            "\nNumber of seats: " + rs.getString("seatNumber"));
                 }
             s.close();
             con.close();
