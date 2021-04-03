@@ -2,27 +2,35 @@ package com.company;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class Main {
 
     public static void main(String[] args) throws SQLException {
+        ArrayList<Person> pList = new ArrayList<>();
 
-        Person a = new Person("Emil", "Agri Larsen", 22, "Nordhavns finekvarter", "200, 3F");
-        Person b = new Person("Malou", "Lerhøj Eskildsen", 23, "Lundebjerggårdsvej", "254, 2a");
+        Person a = new Person("Emil", "Bentsen", 31, "Ingenmandsland", "3");
+        Person b = new Person("Hansine", "Hansen", 59, "Jyttevej", "55");
 
-        String f = b.getFirstname();
-        String l = b.getLastname();
-        int age = b.getAge();
-        String ad = b.getAddress();
-        String an = b.getaNumber();
+        pList.add(a);
+        pList.add(b);
+
+        String f = a.getFirstname();
+        String l = a.getLastname();
+        int age = a.getAge();
+        String ad = a.getAddress();
+        String an = a.getaNumber();
 
 
         //personTilDatabaseManu();
         //personTilDB(f, l, age, ad, an);
-        læsFraDB();
+        //læsFraDB();
+        objectTilDB(pList);
 
     }
+
+
 
     // Metode hvor man "manuelt" kan skrive en Person til databasen Leg, til tabellen Person.
     public static void personTilDatabaseManu() throws SQLException {
@@ -58,6 +66,9 @@ public class Main {
         }
     }
 
+
+
+    // Metode der indsætter parameter overførte Strings / Int ind i en database.
     public static void personTilDB(String f, String l, int age, String ad, String an) throws SQLException {
         try {
             // For at dette program virker, har jeg været nødt til at specificere database navnet i min url, altså "leg"
@@ -91,6 +102,11 @@ public class Main {
         }
     }
 
+
+
+
+
+    // Metode der kan læse indholdet af en database.
     public static void læsFraDB() {
         final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
         final String DATABASE_URL = "jdbc:mysql://127.0.0.1:3306/?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
@@ -124,6 +140,44 @@ public class Main {
             System.err.println("Driver Class not found");
             System.out.println(noClass.getMessage());
             System.exit(1);  // terminate program
+        }
+    }
+
+    // Metode der tager en parameter overført ArrayList, og skriver indholdet ind i en database.
+    public static void objectTilDB(ArrayList<Person> pList) throws SQLException {
+        try {
+            // For at dette program virker, har jeg været nødt til at specificere database navnet i min url, altså "leg"
+            //Men dette program kan skrive ud til en database.
+            String myDriver = "com.mysql.cj.jdbc.Driver";
+            String myUrl = "jdbc:mysql://127.0.0.1:3306/leg?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+            Class.forName(myDriver);
+            Connection conn = DriverManager.getConnection(myUrl, "Her", "0");
+
+            // Mysql indsæt string
+            String ind = "INSERT INTO Person (firstname, lastname, age, address, aNumber)"
+                    + " values (?, ?, ?, ?, ?)";
+
+            // create the mysql insert preparedstatement
+            PreparedStatement preparedStmt = conn.prepareStatement(ind);
+
+
+            for(int i = 0; i < pList.size(); i++) {
+                preparedStmt.setString(1,pList.get(i).getFirstname());
+                preparedStmt.setString(2,pList.get(i).getLastname());
+                preparedStmt.setInt   (3,pList.get(i).getAge());
+                preparedStmt.setString(4,pList.get(i).getAddress());
+                preparedStmt.setString(5,pList.get(i).getaNumber());
+
+                // execute the preparedstatement
+                preparedStmt.executeUpdate();
+
+            }
+
+            conn.close();
+
+        }catch (Exception e) {
+            System.err.println("Got an exception!");
+            System.err.println(e.getMessage());
         }
     }
 
