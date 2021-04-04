@@ -14,6 +14,8 @@ public class Main {
         ArrayList<FamilyCar> familyCars = new ArrayList<>();
         ArrayList<Car> car = new ArrayList<>();
 
+        læsFraDBPersonTilArray(list);
+
         boolean stop = true;
         Scanner scan = new Scanner(System.in);
 
@@ -116,34 +118,20 @@ public class Main {
             }
         }
 
-     /*System.out.println("Create private rentale enter 1, for company enter 2 or 3 to quit");
-      int choise = scan.nextInt();
-      while(choise != 3){
-         if(choise == 1){
-            createPrivatRental(scan, list);
-         }else if(choise == 2){
-            createCompanyRental(scan, list);
-         }
-         writeToFile(list);
-         System.out.println("Create private rental enter 1, company rental enter 2, 3 to quit");
-         choise = scan.nextInt();*/
-
-
-
     }
 
 
     //Metoder
-    public static void makeContract(Scanner scan, ArrayList<Person> costumerlist, ArrayList <Car> carmodellist, ArrayList<Contract> contraclist) throws FileNotFoundException, SQLException {
+    public static void makeContract(Scanner scan, ArrayList<Person> list, ArrayList <Car> carmodellist, ArrayList<Contract> contraclist) throws FileNotFoundException, SQLException {
         //PERSON
         System.out.println("Choose Costumer by number");
 
-        for(int i = 0; i < costumerlist.size(); i++){
-            System.out.println(i + ". " + costumerlist.get(i).nameOfDriver);
+        for(int i = 0; i < list.size(); i++){
+            System.out.println(i + ". " + list.get(i).nameOfDriver);
         }
 
         int costumerchoise = scan.nextInt();
-        int costumerid = costumerlist.get(costumerchoise).id;
+        int costumerid = list.get(costumerchoise).id;
 
         //CAR
         System.out.println("Choose Car by number");
@@ -497,22 +485,22 @@ public class Main {
       }
    }*/
 
-    public static void printPerson(ArrayList<Person> p, Scanner scan){
+    public static void printPerson(ArrayList<Person> list, Scanner scan){
         String svar = scan.next();
         if(svar.equals("1")){
-            for(int i = 0; i < p.size(); i++){
-                System.out.println(p.get(i));
+            for(int i = 0; i < list.size(); i++){
+                System.out.println(list.get(i));
                 System.out.println("\n---------------------\n");
             }
         }else if(svar.equals("2")){
-            for(Person st : p){
+            for(Person st : list){
                 if(st.symbol.startsWith("P")){
                     System.out.println(st);
                     System.out.println("\n---------------------\n");
                 }
             }
         }else if(svar.equalsIgnoreCase("3")){
-            for(Person st : p){
+            for(Person st : list){
                 if(st.symbol.startsWith("C")){
                     System.out.println(st);
                     System.out.println("\n---------------------\n");
@@ -520,7 +508,7 @@ public class Main {
 
             }
         } else if(svar.equalsIgnoreCase("4")) {
-            læsFraDBPerson();
+            læsFraDBPersonMedPrint(list);
         } else{
             System.out.println("You typed something wrong, try again.");
         }
@@ -713,8 +701,7 @@ public class Main {
     // Metode der tager en parameter overført ArrayList, og skriver indholdet ind i en database. (familyCar list)
     public static void objectTilDBFamilyCar(ArrayList<FamilyCar> familyCars) throws SQLException {
         try {
-            // For at dette program virker, har jeg været nødt til at specificere database navnet i min url, altså "leg"
-            //Men dette program kan skrive ud til en database.
+            // For at dette program virker, har jeg været nødt til at specificere database navnet i min url, altså "kailua"
             String myDriver = "com.mysql.cj.jdbc.Driver";
             String myUrl = "jdbc:mysql://127.0.0.1:3306/kailua?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
             Class.forName(myDriver);
@@ -754,7 +741,8 @@ public class Main {
         }
     }
 
-    public static void læsFraDBPerson() {
+    // Metode der opretter person objekter fra databasen, og smider dem ind på vores person ArrayList
+    public static void læsFraDBPersonTilArray(ArrayList<Person> list) {
         final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
         final String DATABASE_URL = "jdbc:mysql://127.0.0.1:3306/?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 
@@ -768,11 +756,8 @@ public class Main {
 
             if (rs != null)
                 while (rs.next()) {
-                    System.out.println("\nPersons in the database: " + "\nID: " + rs.getString("PersonID") +
-                            "\nName of driver: " + rs.getString("nameOfDriver") + "\nAddress: " + rs.getString("Address") +
-                            "\nZip code: " + rs.getInt("PostNumber") + "\nCity: " + rs.getString("City") +
-                            "\nMobile phonenumber: " + rs.getInt("mobilePhone") + "\nPhonenumber: " + rs.getInt("phone") +
-                            "\nEmail: " + rs.getString("email"));
+                    Person p2 = new Person(rs.getString("Symbol"),rs.getInt("id"),rs.getString("nameOfdriver"), rs.getString("Address"), rs.getInt("PostNumber"), rs.getString("City"), rs.getInt("mobilePhone"), rs.getInt("phone"), rs.getString("Email"));
+                    list.add(p2);
                 }
             s.close();
             con.close();
@@ -794,6 +779,49 @@ public class Main {
         }
     }
 
+    // Metode der læser vores personer fra databasen, og printer indholdet i konsolen.
+    public static void læsFraDBPersonMedPrint(ArrayList<Person> list) {
+        final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+        final String DATABASE_URL = "jdbc:mysql://127.0.0.1:3306/?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+
+        try {
+            Connection con;
+            Statement s = null;
+            Class.forName (JDBC_DRIVER);
+            con = DriverManager.getConnection(DATABASE_URL,"Her","0");
+            s = con.createStatement();
+            ResultSet rs = s.executeQuery("SELECT * FROM kailua.person;");
+
+            if (rs != null)
+                while (rs.next()) {
+                    System.out.println("\nPersons in the database: " + "\nSymbol: " + rs.getString("Symbol") + "\nID: " + rs.getInt("id") +
+                            "\nName of driver: " + rs.getString("nameOfDriver") + "\nAddress: " + rs.getString("Address") +
+                            "\nZip code: " + rs.getInt("PostNumber") + "\nCity: " + rs.getString("City") +
+                            "\nMobile phonenumber: " + rs.getInt("mobilePhone") + "\nPhonenumber: " + rs.getInt("phone") +
+                            "\nEmail: " + rs.getString("email"));
+
+                }
+            s.close();
+            con.close();
+        } catch (SQLException sqlex) {
+            try{
+                Connection con = null;
+                System.out.println("Exception part 1: " + sqlex.getMessage());
+                con.close();
+                System.exit(1);  // terminate program
+            }
+            catch(SQLException sql){
+                System.out.println("Exception!" + sql.getMessage());
+            }
+        }
+        catch (ClassNotFoundException noClass) {
+            System.err.println("Driver Class not found");
+            System.out.println(noClass.getMessage());
+            System.exit(1);  // terminate program
+        }
+    }
+
+    // Metode der læser vores luksus biler fra databsen, og printer dem i konsolen.
     public static void læsFraDBLux() {
         final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
         final String DATABASE_URL = "jdbc:mysql://127.0.0.1:3306/?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
@@ -836,6 +864,7 @@ public class Main {
         }
     }
 
+    // Metode der læser vores sports biler fra databasen og printer dem ud i konsolen.
     public static void læsFraDBSport() {
         final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
         final String DATABASE_URL = "jdbc:mysql://127.0.0.1:3306/?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
@@ -877,6 +906,7 @@ public class Main {
         }
     }
 
+    // Metode der læser vores familie biler fra databsen og printer dem i konsolen.
     public static void læsFraDBFamily() {
         final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
         final String DATABASE_URL = "jdbc:mysql://127.0.0.1:3306/?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
