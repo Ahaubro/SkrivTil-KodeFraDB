@@ -7,6 +7,7 @@ import java.io.*;
 public class Main {
     public static void main (String [] args) throws FileNotFoundException, SQLException {
 
+        ArrayList<Person> listFraDB = new ArrayList<>();
         ArrayList<Person> list = new ArrayList<>();
         ArrayList<Contract> contracts = new ArrayList<>();
         ArrayList<LuxuryCar> luksusListen = new ArrayList<>();
@@ -30,10 +31,10 @@ public class Main {
                         System.out.println("Private or company");
                         String svar = scan.next();
                         if(svar.equalsIgnoreCase("Private")){
-                            createPrivateRental(scan, list);
+                            createPrivateRental(scan, listFraDB);
                             stopcase = false;
                         }else if(svar.equalsIgnoreCase("Company")){
-                            createCompanyRental(scan, list);
+                            createCompanyRental(scan, listFraDB);
                             stopcase = false;
                         }else if(svar.equalsIgnoreCase("Quit")){
                             stopcase = false;
@@ -74,7 +75,7 @@ public class Main {
                         String svar = scan.next();
                         if(svar.equalsIgnoreCase("Person")){
                             System.out.println("Select what you want to print:\n1. All persons\n2. All private persons\n3. All company persons\n4. All Persons in database");
-                            printPerson(list, scan);
+                            printPerson(listFraDB, scan);
                             stopcase = false;
                         }else if(svar.equalsIgnoreCase("Car")){
                             System.out.println("Select what you want to print:\n1. All Cars\n2. All Family Cars in database \n3. All Sports Cars in database\n4. All Luxury Cars in database");
@@ -93,7 +94,7 @@ public class Main {
                         System.out.println("Create Conctarct Yes/No");
                         String svar = scan.next();
                         if(svar.equalsIgnoreCase("Yes")){
-                            makeContract(scan, list, car, contracts);
+                            makeContract(scan, listFraDB, car, contracts);
                             stopcase = false;
                         }else if(svar.equalsIgnoreCase("No")){
                             stopcase = false;
@@ -107,7 +108,7 @@ public class Main {
 
                 case "5":
                     System.out.println("Programmet lukkes");
-                    //writeToFile(list);
+                    //writeToFile(listFraDB);
                     //writeToCarFile(car);
                     stop = false;
                     break;
@@ -207,13 +208,14 @@ public class Main {
     }
 
 
-    public static void createCompanyRental(Scanner scan, ArrayList<Person> cr1) throws FileNotFoundException, SQLException {
+    public static void createCompanyRental(Scanner scan, ArrayList<Person> list) throws FileNotFoundException, SQLException {
         System.out.println("Remember to exchange space with \"-\" ");
         System.out.println("Enter name of driver: ");
-        String nameOfDriver = scan.next();
+        String temp = scan.nextLine();
+        String nameOfDriver = scan.nextLine();
 
         System.out.println("Enter address: ");
-        String adress = scan.next();
+        String adress = scan.nextLine();
 
         System.out.println("Enter postnumber: ");
         int postNumber = scan.nextInt();
@@ -244,13 +246,13 @@ public class Main {
 
         //laver et kunde ID her:
         String symbol = "C";
-        int id = cr1.size();
+        int id = list.size();
 
         CompanyRental cr = new CompanyRental(symbol, id, nameOfDriver, adress, postNumber, city, mobilenumber, phone, eMail, cn, ca, cnr, crn);
-        cr1.add(cr); // Her tilføjes objectet cr som er af typen companyrental som er subclass til superclassen Person til arraylisten
+        list.add(cr); // Her tilføjes objectet cr som er af typen companyrental som er subclass til superclassen Person til arraylisten
         //writeToFile(cr1);//Her gemmes Arraylisten til filen
 
-        objectTilDBPerson(cr1);
+        objectTilDBPerson(list);
 
     }
 
@@ -535,7 +537,7 @@ public class Main {
     // Metode der tager en parameter overført ArrayList, og skriver indholdet ind i en database. (Person list)
     public static void objectTilDBPerson(ArrayList<Person> list) throws SQLException {
         try {
-            // For at dette program virker, har jeg været nødt til at specificere database navnet i min url, altså "leg"
+            // For at dette program virker, har jeg været nødt til at specificere database navnet i min url, altså "kailua"
             //Men dette program kan skrive ud til en database.
             String myDriver = "com.mysql.cj.jdbc.Driver";
             String myUrl = "jdbc:mysql://127.0.0.1:3306/kailua?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
@@ -543,22 +545,23 @@ public class Main {
             Connection conn = DriverManager.getConnection(myUrl, "Her", "0");
 
             // Mysql indsæt string
-            String ind = "INSERT INTO Person (Symbol, nameOfDriver, Address, PostNumber, City, mobilePhone, phone, email)"
-                    + " values (?, ?, ?, ?, ?, ?, ?, ?)";
+            String ind = "INSERT INTO Person (id, Symbol, nameOfDriver, Address, PostNumber, City, mobilePhone, phone, email)"
+                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             // create the mysql insert preparedstatement
             PreparedStatement preparedStmt = conn.prepareStatement(ind);
 
 
             for(int i = 0; i < list.size(); i++) {
-                preparedStmt.setString(1,list.get(i).symbol);
-                preparedStmt.setString(2,list.get(i).nameOfDriver);
-                preparedStmt.setString(3,list.get(i).adress);
-                preparedStmt.setInt   (4,list.get(i).postNumber);
-                preparedStmt.setString(5,list.get(i).city);
-                preparedStmt.setInt   (6,list.get(i).mobilePhone);
-                preparedStmt.setInt   (7,list.get(i).phone);
-                preparedStmt.setString(8,list.get(i).eMail);
+                preparedStmt.setInt   (1, list.get(i).id);
+                preparedStmt.setString(2,list.get(i).symbol);
+                preparedStmt.setString(3,list.get(i).nameOfDriver);
+                preparedStmt.setString(4,list.get(i).adress);
+                preparedStmt.setInt   (5,list.get(i).postNumber);
+                preparedStmt.setString(6,list.get(i).city);
+                preparedStmt.setInt   (7,list.get(i).mobilePhone);
+                preparedStmt.setInt   (8,list.get(i).phone);
+                preparedStmt.setString(9,list.get(i).eMail);
 
                 // execute the preparedstatement
                 preparedStmt.executeUpdate();
@@ -742,7 +745,7 @@ public class Main {
     }
 
     // Metode der opretter person objekter fra databasen, og smider dem ind på vores person ArrayList
-    public static void læsFraDBPersonTilArray(ArrayList<Person> list) {
+    public static void læsFraDBPersonTilArray(ArrayList<Person> listFraDB) {
         final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
         final String DATABASE_URL = "jdbc:mysql://127.0.0.1:3306/?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 
@@ -757,7 +760,7 @@ public class Main {
             if (rs != null)
                 while (rs.next()) {
                     Person p2 = new Person(rs.getString("Symbol"),rs.getInt("id"),rs.getString("nameOfdriver"), rs.getString("Address"), rs.getInt("PostNumber"), rs.getString("City"), rs.getInt("mobilePhone"), rs.getInt("phone"), rs.getString("Email"));
-                    list.add(p2);
+                    listFraDB.add(p2);
                 }
             s.close();
             con.close();
