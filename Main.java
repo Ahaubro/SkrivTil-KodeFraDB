@@ -125,6 +125,7 @@ public class Main {
     //Metoder
     public static void makeContract(Scanner scan, ArrayList<Person> list, ArrayList <Car> carmodellist, ArrayList<Contract> contraclist) throws FileNotFoundException, SQLException {
         //PERSON
+        læsFraDBPersonTilArray(list);
         System.out.println("Choose Costumer by number");
 
         for(int i = 0; i < list.size(); i++){
@@ -135,6 +136,7 @@ public class Main {
         int costumerid = list.get(costumerchoise).id;
 
         //CAR
+
         System.out.println("Choose Car by number");
 
         for(int i = 0; i < carmodellist.size(); i++){
@@ -306,7 +308,6 @@ public class Main {
         System.out.println("Enter license plate number: ");
         String plate = scan.next();
 
-
         System.out.println("Enter registration month/year: ");
         String regYearAndMonth = scan.next();
 
@@ -321,7 +322,6 @@ public class Main {
 
         System.out.println("Does the car have Cruise Control: ");
         String hasCC = scan.next();
-
 
         System.out.println("Enter the amount of seats: ");
         String seatNumber = scan.next();
@@ -537,35 +537,27 @@ public class Main {
     // Metode der tager en parameter overført ArrayList, og skriver indholdet ind i en database. (Person list)
     public static void objectTilDBPerson(ArrayList<Person> list) throws SQLException {
         try {
-            // For at dette program virker, har jeg været nødt til at specificere database navnet i min url, altså "kailua"
-            //Men dette program kan skrive ud til en database.
             String myDriver = "com.mysql.cj.jdbc.Driver";
             String myUrl = "jdbc:mysql://127.0.0.1:3306/kailua?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
             Class.forName(myDriver);
             Connection conn = DriverManager.getConnection(myUrl, "Her", "0");
 
-            // Mysql indsæt string
-            String ind = "INSERT INTO Person (id, Symbol, nameOfDriver, Address, PostNumber, City, mobilePhone, phone, email)"
-                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String ind = "INSERT INTO Person (Symbol, nameOfDriver, Address, PostNumber, City, mobilePhone, phone, email)"
+                    + " values (?, ?, ?, ?, ?, ?, ?, ?)";
 
-            // create the mysql insert preparedstatement
             PreparedStatement preparedStmt = conn.prepareStatement(ind);
 
-
             for(int i = 0; i < list.size(); i++) {
-                preparedStmt.setInt   (1, list.get(i).id);
-                preparedStmt.setString(2,list.get(i).symbol);
-                preparedStmt.setString(3,list.get(i).nameOfDriver);
-                preparedStmt.setString(4,list.get(i).adress);
-                preparedStmt.setInt   (5,list.get(i).postNumber);
-                preparedStmt.setString(6,list.get(i).city);
-                preparedStmt.setInt   (7,list.get(i).mobilePhone);
-                preparedStmt.setInt   (8,list.get(i).phone);
-                preparedStmt.setString(9,list.get(i).eMail);
+                preparedStmt.setString(1,list.get(i).symbol);
+                preparedStmt.setString(2,list.get(i).nameOfDriver);
+                preparedStmt.setString(3,list.get(i).adress);
+                preparedStmt.setInt   (4,list.get(i).postNumber);
+                preparedStmt.setString(5,list.get(i).city);
+                preparedStmt.setInt   (6,list.get(i).mobilePhone);
+                preparedStmt.setInt   (7,list.get(i).phone);
+                preparedStmt.setString(8,list.get(i).eMail);
 
-                // execute the preparedstatement
                 preparedStmt.executeUpdate();
-
             }
 
             conn.close();
@@ -579,8 +571,7 @@ public class Main {
     // Metode der tager en parameter overført ArrayList, og skriver indholdet ind i en database. (Contracts list)
     public static void objectTilDBContract(ArrayList<Contract> contracts) throws SQLException {
         try {
-            // For at dette program virker, har jeg været nødt til at specificere database navnet i min url, altså "leg"
-            //Men dette program kan skrive ud til en database.
+
             String myDriver = "com.mysql.cj.jdbc.Driver";
             String myUrl = "jdbc:mysql://127.0.0.1:3306/kailua?user=Her?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
             Class.forName(myDriver);
@@ -759,7 +750,7 @@ public class Main {
 
             if (rs != null)
                 while (rs.next()) {
-                    Person p2 = new Person(rs.getString("Symbol"),rs.getInt("id"),rs.getString("nameOfdriver"), rs.getString("Address"), rs.getInt("PostNumber"), rs.getString("City"), rs.getInt("mobilePhone"), rs.getInt("phone"), rs.getString("Email"));
+                    Person p2 = new Person(rs.getString("Symbol"),rs.getInt("PersonID"),rs.getString("nameOfdriver"), rs.getString("Address"), rs.getInt("PostNumber"), rs.getString("City"), rs.getInt("mobilePhone"), rs.getInt("phone"), rs.getString("Email"));
                     listFraDB.add(p2);
                 }
             s.close();
@@ -797,7 +788,7 @@ public class Main {
 
             if (rs != null)
                 while (rs.next()) {
-                    System.out.println("\nPersons in the database: " + "\nSymbol: " + rs.getString("Symbol") + "\nID: " + rs.getInt("id") +
+                    System.out.println("\nPersons in the database: " + "\nID: " + rs.getInt("PersonID") + "\nSymbol: " + rs.getString("Symbol") +
                             "\nName of driver: " + rs.getString("nameOfDriver") + "\nAddress: " + rs.getString("Address") +
                             "\nZip code: " + rs.getInt("PostNumber") + "\nCity: " + rs.getString("City") +
                             "\nMobile phonenumber: " + rs.getInt("mobilePhone") + "\nPhonenumber: " + rs.getInt("phone") +
